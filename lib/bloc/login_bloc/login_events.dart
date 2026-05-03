@@ -21,6 +21,10 @@ class PasswordChanged extends LoginEvents {
   List<Object> get props => [password];
 }
 
+class TogglePasswordVisibility extends LoginEvents {
+  const TogglePasswordVisibility();
+}
+
 class LoginApi extends LoginEvents {
-  const LoginApi() ;
+  const LoginApi();
 }

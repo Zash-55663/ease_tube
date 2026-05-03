@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "695964703599",
+    "project_id": "ease-tube",
+    "storage_bucket": "ease-tube.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695964703599:android:cc19bfeec63eb7101b269a",
+        "android_client_info": {
+          "package_name": "com.example.ease_tube"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCStlXw9L9u03UsQLg4dQf7lGIE9HiQHwo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

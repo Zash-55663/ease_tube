@@ -27,13 +27,25 @@ class _PasswordInputWidgetState extends State<PasswordInputWidget> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginStates>(
-      buildWhen: (current, previous) => false,
+      buildWhen: (current, previous) =>
+          previous.isPasswordVisible != current.isPasswordVisible,
       builder: (context, state) {
         return TextFormField(
           controller: passwordController,
           focusNode: focusNode, // Setting focus node
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.lock),
+            suffixIcon: IconButton(
+              onPressed: () {
+                context.read<LoginBloc>().add(TogglePasswordVisibility());
+              },
+              icon: Icon(
+                state.isPasswordVisible
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                size: 23,
+              ),
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide(width: 3, color: AppColors.primary),
@@ -53,8 +65,8 @@ class _PasswordInputWidgetState extends State<PasswordInputWidget> {
             labelText: 'Password', // Label text for password input field
             errorMaxLines: 2, // Maximum lines for error text
           ),
-          obscureText:
-              true, // Making the text input obscure (i.e., showing dots instead of actual characters)
+          obscureText: !state
+              .isPasswordVisible, // Making the text input obscure (i.e., showing dots instead of actual characters)
           validator: (value) {
             if (value!.isEmpty) {
               return 'Enter password';

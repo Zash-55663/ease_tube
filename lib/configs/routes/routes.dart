@@ -2,7 +2,7 @@ import 'package:ease_tube/configs/routes/routes_name.dart';
 
 import 'package:flutter/material.dart';
 
-import '../../view/views.dart';
+import '../../view/view.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -15,6 +15,10 @@ class Routes {
       case RoutesName.login:
         return MaterialPageRoute(
           builder: (BuildContext context) => const LoginScreen(),
+        );
+      case RoutesName.userProfile:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const UserProfileScreen(),
         );
 
       default:

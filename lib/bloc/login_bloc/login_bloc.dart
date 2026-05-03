@@ -3,19 +3,18 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:ease_tube/data/response/api_response.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
-import '../../repository/auth_api/auth_api_repository.dart';
-import '../../services/session_manager/session_controller.dart';
 part 'login_events.dart';
 part 'login_states.dart';
 
 class LoginBloc extends Bloc<LoginEvents, LoginStates> {
-  AuthApiRepository authApiRepository;
-
-  LoginBloc({required this.authApiRepository}) : super(const LoginStates()) {
+  LoginBloc() : super(const LoginStates()) {
     on<EmailChanged>(_onEmailChanged);
     on<PasswordChanged>(_onPasswordChanged);
     on<LoginApi>(_onFormSubmitted);
+    on<TogglePasswordVisibility>(_onTogglePasswordVisibility);
   }
 
   void _onEmailChanged(EmailChanged event, Emitter<LoginStates> emit) {
@@ -26,31 +25,34 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
     emit(state.copyWith(password: event.password));
   }
 
+  void _onTogglePasswordVisibility(
+    TogglePasswordVisibility event,
+    Emitter<LoginStates> emit,
+  ) {
+    emit(state.copyWith(isPasswordVisible: !state.isPasswordVisible));
+  }
+
   Future<void> _onFormSubmitted(
     LoginApi event,
     Emitter<LoginStates> emit,
   ) async {
-    Map<String, String> data = {
-      'email': state.email,
-      'password': state.password,
-    };
-    emit(state.copyWith(loginApi: const ApiResponse.loading()));
+    debugPrint("BLOC: Starting Login Process for ${state.email}");
+    emit(state.copyWith(loginApi: ApiResponse.loading()));
 
-    await authApiRepository
-        .loginApi(data)
-        .then((value) async {
-          if (value.error.isNotEmpty) {
-            emit(state.copyWith(loginApi: ApiResponse.error(value.error)));
-          } else {
-            await SessionController().saveUserInPreference(value);
-            await SessionController().getUserFromPreference();
-            emit(
-              state.copyWith(loginApi: const ApiResponse.completed('lOGIN')),
-            );
-          }
-        })
-        .onError((error, stackTrace) {
-          emit(state.copyWith(loginApi: ApiResponse.error(error.toString())));
-        });
+    try {
+      // Firebase Auth call
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: state.email.trim(),
+        password: state.password.trim(),
+      );
+
+      // If successful, emit completed
+      emit(state.copyWith(loginApi: ApiResponse.completed('Login successful')));
+    } on FirebaseAuthException catch (e) {
+      emit(state.copyWith(loginApi: ApiResponse.error(e.message.toString())));
+    } catch (e) {
+      debugPrint("BLOC: Error: $e"); // <--- Add this
+      emit(state.copyWith(loginApi: ApiResponse.error(e.toString())));
+    }
   }
 }
