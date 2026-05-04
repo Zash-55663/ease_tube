@@ -1,3 +1,4 @@
+import 'package:ease_tube/configs/routes/routes_name.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -47,8 +48,18 @@ class UserProfileScreen extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.logout_outlined),
               onPressed: () async {
+                // 1. Sign out from the Firebase backend
                 await FirebaseAuth.instance.signOut();
-                // Ensure you trigger a navigation back to the login screen here
+
+                // 2. Clear the navigation stack and go to the Splash or AuthWrapper
+                // This ensures the StreamBuilder in AuthWrapper catches the 'null' user state
+                if (context.mounted) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    RoutesName.splash, // Or use your initial entry route
+                    (route) => false,
+                  );
+                }
               },
             ),
           ],
