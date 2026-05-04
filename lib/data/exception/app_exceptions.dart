@@ -4,9 +4,6 @@ class AppException implements Exception {
   final dynamic _prefix; // Prefix for the exception
 
   /// Constructor for creating an [AppException] instance.
-  ///
-  /// The [message] parameter represents the message associated with the exception,
-  /// and the [prefix] parameter represents the prefix for the exception.
   AppException([this._message, this._prefix]);
 
   @override
@@ -15,45 +12,30 @@ class AppException implements Exception {
   }
 }
 
-/// Exception class representing a fetch data error during communication.
+/// Thrown when the server is unreachable or the request times out
 class FetchDataException extends AppException {
-  /// Constructor for creating a [FetchDataException] instance.
-  ///
-  /// The [message] parameter represents the error message.
   FetchDataException([String? message])
     : super(message, 'Error During Communication');
 }
 
-/// Exception class representing a bad request error.
+/// Thrown for 400 status codes indicating an incorrect API call
 class BadRequestException extends AppException {
-  /// Constructor for creating a [BadRequestException] instance.
-  ///
-  /// The [message] parameter represents the error message.
   BadRequestException([String? message]) : super(message, 'Invalid request');
 }
 
-/// Exception class representing an unauthorized request error.
+/// Thrown for 401 or 403 status codes when credentials or API keys are invalid
 class UnauthorisedException extends AppException {
-  /// Constructor for creating an [UnauthorisedException] instance.
-  ///
-  /// The [message] parameter represents the error message.
   UnauthorisedException([String? message])
     : super(message, 'Unauthorised request');
 }
 
-/// Exception class representing an invalid input error.
+/// Thrown when form validation or user input fails processing
 class InvalidInputException extends AppException {
-  /// Constructor for creating an [InvalidInputException] instance.
-  ///
-  /// The [message] parameter represents the error message.
   InvalidInputException([String? message]) : super(message, 'Invalid Input');
 }
 
-/// Exception class representing a no internet connection error.
+/// Specifically handles SocketExceptions when no data connection is active
 class NoInternetException extends AppException {
-  /// Constructor for creating a [NoInternetException] instance.
-  ///
-  /// The [message] parameter represents the error message.
   NoInternetException([String? message])
     : super(message, 'No Internet Connection');
 }

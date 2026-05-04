@@ -1,43 +1,50 @@
-// ignore_for_file: unrelated_type_equality_checks
-
+import 'package:ease_tube/configs/components/round_button.dart';
+import 'package:ease_tube/utils/extensions/flush_bar_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../bloc/login_bloc/login_bloc.dart';
-import '../../../configs/components/round_button.dart';
+import '../../../configs/routes/routes_name.dart';
 import '../../../data/response/status.dart';
-import '../../../utils/extensions/flush_bar_extension.dart';
 
-/// A widget representing the submit button for the login form.
+// A specialized button that handles form submission and authentication state changes
 class SubmitButton extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   const SubmitButton({super.key, required this.formKey});
 
   @override
   Widget build(BuildContext context) {
+    // BlocConsumer combines a listener for side effects and a builder for UI updates
     return BlocConsumer<LoginBloc, LoginStates>(
       listenWhen: (current, previous) =>
           current.loginApi.status != previous.loginApi.status,
       listener: (context, state) {
+        // Displays an error message if the authentication fails
         if (state.loginApi.status == Status.error) {
-          context.flushBarErrorMessage(
-            message: state.loginApi.message.toString(),
+          context.showFlushBar(message: state.loginApi.message.toString());
+        }
+
+        // Redirects to the Home Screen and clears navigation history upon successful login
+        if (state.loginApi.status == Status.completed) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            RoutesName.home,
+            (route) => false,
           );
         }
       },
       builder: (context, state) {
         return SizedBox(
+          // Sets button width to 30% of the screen width for a centered, compact look
           width: MediaQuery.of(context).size.width * 0.3,
           child: RoundButton(
             title: 'Login',
-            loading: state.loginApi.status == Status.loading ? true : false,
+            // Shows a loading spinner automatically when the API status is 'loading'
+            loading: state.loginApi.status == Status.loading,
             onPress: () {
-              debugPrint("Button Pressed");
+              // Validates all form fields before triggering the login event
               if (formKey.currentState!.validate()) {
-                debugPrint("Validation Passed - Adding Event");
                 context.read<LoginBloc>().add(const LoginApi());
-              } else {
-                debugPrint("Validation Failed");
               }
             },
           ),

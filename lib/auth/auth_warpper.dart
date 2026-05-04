@@ -1,33 +1,34 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../../view/view.dart';
 
+/// A widget that manages the high-level navigation flow based on the user's session.
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
-      // This stream listens to Firebase Auth changes (login/logout/app start)
+      // Listens to the real-time authentication state from Firebase
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // 1. If the connection is still loading, show a loading spinner
+        // 1. Initial State: While checking for an existing session on app startup
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
+              // Using AppColors.primary (0xFFA8D0B4) for consistency
               child: CircularProgressIndicator(color: Color(0xFFA8D0B4)),
             ),
           );
         }
 
-        // 2. If snapshot has data, the user is logged in
+        // 2. Authenticated State: A valid user session exists
         if (snapshot.hasData) {
-          return const HomeScreen(); // Your Ease tube Home Feed
+          return const HomeScreen(); // Directs to the main video feed
         }
 
-        // 3. Otherwise, the user is NOT logged in
-        return const LoginScreen();
+        // 3. Unauthenticated State: No user is logged in
+        return const LoginScreen(); // Directs to the credentials entry screen
       },
     );
   }

@@ -58,12 +58,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDIMEjozCzo5lI91r0qYL-qOidODk4AtmE',
+    apiKey: 'AIzaSyCHSB_VHTVqiZjmJJ6lc-0yLTwZ6wrT44c',
     appId: '1:695964703599:ios:134bde2b3cf55f051b269a',
     messagingSenderId: '695964703599',
     projectId: 'ease-tube',
     storageBucket: 'ease-tube.firebasestorage.app',
-    iosBundleId: 'com.example.easeTube',
+    iosBundleId: 'com.example.ease_tube',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

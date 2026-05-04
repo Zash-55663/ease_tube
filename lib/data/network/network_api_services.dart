@@ -9,12 +9,9 @@ import 'package:http/http.dart';
 
 import '../exception/app_exceptions.dart';
 
-/// Class for handling network API requests.
+/// Concrete implementation of network services for Ease'TUBE
 class NetworkApiService implements BaseApiServices {
-  /// Sends a GET request to the specified [url] and returns the response.
-  ///
-  /// Throws a [NoInternetException] if there is no internet connection.
-  /// Throws a [FetchDataException] if the network request times out.
+  /// Performs a GET request with a 20 seconds safety timeout
   @override
   Future<dynamic> getApi(String url) async {
     if (kDebugMode) {
@@ -27,22 +24,16 @@ class NetworkApiService implements BaseApiServices {
           .timeout(const Duration(seconds: 20));
       responseJson = returnResponse(response);
     } on SocketException {
+      // Specifically handles connectivity issues on devices like your itel hardware
       throw NoInternetException('');
     } on TimeoutException {
       throw FetchDataException('Network Request time out');
     }
 
-    if (kDebugMode) {
-      print(responseJson);
-    }
     return responseJson;
   }
 
-  /// Sends a POST request to the specified [url] with the provided [data]
-  /// and returns the response.
-  ///
-  /// Throws a [NoInternetException] if there is no internet connection.
-  /// Throws a [FetchDataException] if the network request times out.
+  /// Performs a POST request, typically used for authentication or form submission
   @override
   Future<dynamic> postApi(String url, dynamic data) async {
     if (kDebugMode) {
@@ -63,31 +54,23 @@ class NetworkApiService implements BaseApiServices {
       throw FetchDataException('Network Request time out');
     }
 
-    if (kDebugMode) {
-      print(responseJson);
-    }
     return responseJson;
   }
 
-  /// Parses the [response] and returns the corresponding JSON data.
-  ///
-  /// Throws a [FetchDataException] with the appropriate error message if the response status code is not successful.
+  /// Centralized logic to map HTTP status codes to application-specific exceptions
   dynamic returnResponse(http.Response response) {
-    if (kDebugMode) {
-      print(response.statusCode);
-    }
-
     switch (response.statusCode) {
       case 200:
-        dynamic responseJson = jsonDecode(response.body);
-        return responseJson;
+        // Success: parse and return the dynamic JSON body
+        return jsonDecode(response.body);
       case 400:
-        dynamic responseJson = jsonDecode(response.body);
-        return responseJson;
+        // Bad Request: often contains field-specific error messages
+        return jsonDecode(response.body);
       case 401:
         throw BadRequestException(response.body.toString());
-      case 500:
       case 404:
+      case 500:
+        // Server or resource errors
         throw UnauthorisedException(response.body.toString());
       default:
         throw FetchDataException(

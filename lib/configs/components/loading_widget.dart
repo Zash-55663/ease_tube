@@ -1,10 +1,8 @@
 import 'dart:io' show Platform;
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-//custom loading widget, we will used this widget show user some action depending on it's need
-// this widget is generic, we can change it and this change will appear across the app
+// Adaptive loading indicator that matches the host operating system
 class LoadingWidget extends StatelessWidget {
   final double size;
   const LoadingWidget({super.key, this.size = 36.0});
@@ -16,12 +14,13 @@ class LoadingWidget extends StatelessWidget {
         width: size,
         height: size,
         child: Platform.isIOS
-            ? const CupertinoActivityIndicator(
-        )
+            // Renders the standard Apple-style spinner for your iPhone Xs
+            ? const CupertinoActivityIndicator()
+            // Renders the Material Design spinner for your itel hardware
             : const CircularProgressIndicator(
-          strokeWidth: 2.0,
-          color: Colors.blue,
-        ),
+                strokeWidth: 2.0,
+                color: Colors.blue,
+              ),
       ),
     );
   }

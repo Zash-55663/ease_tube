@@ -1,39 +1,58 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+// Displays personal account details and provides logout functionality
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Retrieves the currently authenticated user from Firebase
+    final user = FirebaseAuth.instance.currentUser;
+
+    // Fallback logic for guests or if the session is lost
+    final String email = user?.email ?? 'Not Logged In';
+
+    // Extracts a display name from the email (e.g., "zamad" from "zamad@gmail.com")
+    final String username = email.contains('@') ? email.split('@')[0] : 'User';
+
     return Scaffold(
-      appBar: AppBar(title: Text('User Profile')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            radius: 50,
-            backgroundImage: AssetImage(
-              'assets/images/user_profile.png',
-            ), // Placeholder for user profile image
-          ),
-          SizedBox(height: 20),
-          Text(
-            'John Doe', // Placeholder for user name
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'john.doe@example.com', // Placeholder for user email
-            style: TextStyle(fontSize: 16),
-          ),
-          IconButton(
-            icon: Icon(Icons.logout_outlined),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-            },
-          ),
-        ],
+      appBar: AppBar(title: const Text('User Profile'), centerTitle: true),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // User avatar display using a local asset placeholder
+            const CircleAvatar(
+              radius: 50,
+              backgroundImage: AssetImage('assets/images/user_profile.png'),
+            ),
+            const SizedBox(height: 20),
+
+            // Displays the parsed username in a bold headline style
+            Text(
+              username,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+
+            // Displays the complete email address for account verification
+            Text(
+              email,
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            const SizedBox(height: 30),
+
+            // Logout action to terminate the Firebase session
+            IconButton(
+              icon: const Icon(Icons.logout_outlined),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                // Ensure you trigger a navigation back to the login screen here
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
